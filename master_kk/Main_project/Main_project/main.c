@@ -55,8 +55,6 @@ int main(void)
 	
 	USART_Init(USART_BAUDRATE);		// Intitialize USART with spesified baud rate
     
-    
-    char buffer[20];
     char* days[7] = {"Man", "Tir", "Ons", "Tor", "Fre", "Lor", "Son"};
 
     while (1) {
@@ -83,12 +81,12 @@ int read_continious_clock(){
 	int start_of_day_acknowledged = 0; // Flag to acknowledge the start of the day
 	int break_now = 0;
 	int break_i = 0;
-	int lecture_minutes;
+	int lecture_minutes = 0;
 	char message[5];
 	while (1){				// Read clock continiousely on weekdays between alarm to end of day
 		RTC_Read_Clock(0);
 		char buffer[20];
-		sprintf(buffer, "%02x:%02x:%02x  ", (hour & 0b00111111), minute, second);
+		sprintf(buffer, "%02d:%02d:%02d  ", hour, minute, second);
 		LCD_String_xy(0,0,buffer);
 		 for (int i = 0; i < NUMBER_OF_BREAKS; i++){
 			 if (break_times[i][1] + break_times[i][2] >= 60){		// If the break start + the break length is 60 or over an hour will elape. Example: break {8, 55, 10}, there break end will be 09.05 so it has to check for one hour greather in the end of break check
@@ -138,14 +136,14 @@ int read_continious_clock(){
 			 char buffer2[20];
 			 if (break_now) {
 				 // Calculate the minutes and seconds left for the break
-				 int break_minutes_left = (break_times[break_i][0] * 60 + break_times[break_i][1] + break_times[break_i][2]) - (hour * 60 + minute) - 1;
+				 int break_minutes_left = (break_times[break_i][0] * 60 + break_times[break_i][1] + break_times[break_i][2]) - (hour * 60 + minute) - 1;	// - 1 since we start counting down the seconds
 				 int break_seconds_left = 59 - second;
-				 sprintf(buffer2, "%02x:%02x", break_minutes_left, break_seconds_left);
+				 sprintf(buffer2, "%02d:%02d", break_minutes_left, break_seconds_left);
 				 LCD_String_xy(1,0,buffer2);
 			} else {
 				 // Calculate the minutes and seconds left for the lecture
 				 int lecture_minutes_left = lecture_minutes - (hour * 60 + minute - (break_times[break_i][0] * 60 + break_times[break_i][1])) - 1;
-				 int lecture_seconds_left = (uint8_t)second;
+				 int lecture_seconds_left = 59 - second;
 				 sprintf(buffer2, "%02d:%02d", lecture_minutes_left, lecture_seconds_left);
 				 LCD_String_xy(1,0,buffer2);
 			 }

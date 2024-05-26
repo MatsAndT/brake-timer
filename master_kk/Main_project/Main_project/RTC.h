@@ -1,13 +1,23 @@
-int second, minute, hour, weekday, date, month, year;
+/* This code is inspired, and much is copied from https://www.electronicwings.com/avr-atmega/real-time-clock-rtc-ds1307-interfacing-with-atmega16-32 */
+
+uint8_t second, minute, hour, weekday, date, month, year;
+
+uint8_t BDC2value(char BDC) {
+	uint8_t value = 0;
+	uint8_t tens = (BDC & 0b11110000) >> 4; // Extract the tens from the upper nibble
+	uint8_t ones = (BDC & 0b00001111);        // Extract the ones from the lower nibble
+	value = tens * 10 + ones;         // Combine tens and ones to get the integer value
+	return value;
+}
 
 void RTC_Read_Clock(char read_clock_address) {
 	I2C_Start(RTC_Write_address); // Start I2C communication with RTC
 	I2C_Write(read_clock_address); // Write address to read
 	I2C_Repeated_Start(RTC_Read_address);
 	
-	second = I2C_Read_Ack();
-	minute = I2C_Read_Ack();
-	hour = I2C_Read_Nack(); //Last communication so nack
+	second = BDC2value(I2C_Read_Ack());
+	minute = BDC2value(I2C_Read_Ack());
+	hour = BDC2value(I2C_Read_Nack() & 0b00111111); //Last communication so nack. The two MSB are not relevant
 	I2C_Stop();
 }
 
