@@ -1,0 +1,11 @@
+DS3231_datasheet:
+    type: Web
+    title: DS3231 Extremely Accurate I2C-Integrated RTC/TCXO/Crystal
+    author: Analog Devices
+    url: https://www.analog.com/media/en/technical-documentation/data-sheets/DS3231.pdf
+
+ATmega32_datasheet:
+    type: Web
+    title: ATmega32/L Datasheet
+    author: Atmel Corporation
+    url: https://ww1.microchip.com/downloads/en/DeviceDoc/doc2503.pdf

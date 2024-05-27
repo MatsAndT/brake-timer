@@ -10,12 +10,12 @@ THIS IS THE MASTER
  KK_module:
  - alarm set at 08.00 in the weekdays, when this triggers, then it reads always from it in while
  - print the time on the lcd when reading
- - raise the flag when break
  - is bluetooth master so sends the data to the slave when close to break
- - lowers the flag when break over
  
  teacher_module:
  - shows the time on the 7 segmet display
+ - raise the flag when break
+ - lowers the flag when break over
  */ 
 
 #define F_CPU 1000000UL
@@ -35,11 +35,14 @@ THIS IS THE MASTER
 
 long USART_BAUDRATE = 9600;
 
+#define MAX_LENGTH 20 // Maximum length of string to be transmitted
+volatile char dataTransmit[MAX_LENGTH];
+volatile unsigned int tx_index;	// Index in string to be transmitted
 
 
 int main(void)
 {
-	sei();
+	
 	GICR |= 1 << INT1; // Enable INT1 (Alarm interrupt)
 	MCUCR |= (1 << ISC11);
 	MCUCR &= ~(1 << ISC10); //Detect falling edge
@@ -56,6 +59,7 @@ int main(void)
 	USART_Init(USART_BAUDRATE);		// Intitialize USART with spesified baud rate
     
     char* days[7] = {"Man", "Tir", "Ons", "Tor", "Fre", "Lor", "Son"};
+	sei();
 
     while (1) {
     }
@@ -158,4 +162,18 @@ int read_continious_clock(){
 ISR(INT1_vect){
 	read_continious_clock();
 	RTC_Alarm_Clear();
+}
+
+// Interrupt when the UDRE (buffer to be transmitted over USART) is empty
+/* Problem: As long as the UDRE is empty whis will be triggered over and over again
+
+Solution: Turn on and off the Interrupt for UDRE
+*/
+ISR(USART_UDRE_vect){
+	if (dataTransmit[tx_index] == '\0'){
+		
+	} else {
+		tx_index++;
+		UDR = 
+	}
 }

@@ -88,13 +88,10 @@ void RTC_Alarm_Init(){
 
 void RTC_Alarm1_Time(char _hour, char _minute, char _second){ // The alarm triggers at the spesified time every day.
 	I2C_Start(RTC_Write_address);
-	I2C_Write(7);
+	I2C_Write(7);					// Set alarm1 time in register 7
 	I2C_Write(value2BDC(_second));
 	I2C_Write(value2BDC(_minute));
 	I2C_Write(value2BDC(_hour));
-	/*I2C_Write(0b10000000);
-	I2C_Write(0b10000000);
-	I2C_Write(0b10000000);*/
 	I2C_Write(0b10000000); // Set A1M4 to trigger at that time set
 	I2C_Stop();
 }
@@ -102,6 +99,6 @@ void RTC_Alarm1_Time(char _hour, char _minute, char _second){ // The alarm trigg
 void RTC_Alarm_Clear(){
 	I2C_Start(RTC_Write_address);
 	I2C_Write(0xF);
-	I2C_Write(0b10001000);	// Write 0 at the BSY, A2F and A1F flag. (We need to set values to every, but only want to change A1F. TODO: read what the register is and only change the A1F flag)
+	I2C_Write(0b10001000);	// Write 0 at the BSY, A2F and A1F flag.
 	I2C_Stop();
 }
