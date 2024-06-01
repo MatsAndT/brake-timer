@@ -35,7 +35,7 @@ void seg_init()
 	PORT_DIGIT_SELECT = 0x00;
 	PORT_DIGIT_PINS = 0xff;
 	
-	TCCR0 |= (1 << WGM01); // Configure timer 1 for CTC mode
+	TCCR0 |= (1 << WGM01); // Configure timer 0 for CTC mode
 
 	TIMSK |= (1 << OCIE0); // Enable CTC interrupt
 
