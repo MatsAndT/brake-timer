@@ -24,14 +24,15 @@ int main(){
 
 ISR(USART_RXC_vect) {
 	unsigned char receivedChar;
-	receivedChar = USART_Receive_interrupt();
+	receivedChar = USART_Receive_buffer();
 	if (receivedChar == '\n' || receivedIndex > MAX_LENGTH){
-		dataReceived[receivedIndex] = '\0'; // Add null terminator to mark the end of the string
-		
 		receivedIndex = 0;
+		
+		//TODO: Store the numeric value of the string
+		
 		// Reset the buffer before each read
 		memset(dataReceived, 0, MAX_LENGTH);
-	} else if (receivedChar != '\r' && receivedChar != '\n') {
+	} else if (receivedChar != '\r') {
 		dataReceived[receivedIndex++] = receivedChar;
 	}
 	// Show on the display

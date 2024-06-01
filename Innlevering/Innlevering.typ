@@ -1,11 +1,11 @@
 #let kode(fil) = {
 let kode = read(fil)
-block(
+    block(
     raw(kode, lang: "c"),
     fill: luma(240),
     inset: 8pt,
     radius: 4pt,
-)
+    )
 }
 
 #align(center, image("Logo avdelingsmerke.jpg", width: 50%))
@@ -43,9 +43,9 @@ block(
         #h(1fr)
         27.05.2024
     ],
-    numbering: "1 / 1"
-    
+    numbering: "1"
 )
+
 #counter(page).update(1)
 
 \
@@ -61,7 +61,7 @@ Ved bruk av ATmega32 mikrokontrollere og en rekke komponenter, skulle vi ut ifra
 \
 = Prosjektidé
 == Utfordring
-På skolen har vi pause fra undervisningen med omtrent 45 minutter intervaller, dette er det en fast satt plan på når pausene skal komme. Det er kadett kommandør (KK) som har dette ansvaret, jobben er å følge med på klokken og varsle foredragsholder med 5 minutter før en pause starter. Utfordringen for KK er at hen glemmer å følge med på klokken da dette vil ta over for fokuset på det instruktøren sier. Som resulterer i at pausene ikke kommer når de skal, som da igjen gjør at kadettene sliter med å fokusere når de ikke får avbrekk.
+På skolen har vi pause fra undervisningen med omtrent 45 minutter intervaller, dette er det en fastsatt plan på når pausene skal komme. Det er kadett kommandør (KK) som har dette ansvaret, jobben er å følge med på klokken og varsle foredragsholder med 5 minutter før en pause starter. Utfordringen for KK er at hen glemmer å følge med på klokken da dette vil ta over for fokuset på det instruktøren sier. Som resulterer i at pausene ikke kommer når de skal, som da igjen gjør at kadettene sliter med å fokusere når de ikke får avbrekk.
 
 == Løsning
 Løsningen vi har kommet opp med er å lage et produkt som varsler KK samt foredragsholderen når disse pausene skal komme, og hvor lenge det er til.
@@ -70,7 +70,7 @@ Løsningen vi har kommet opp med er å lage et produkt som varsler KK samt fored
 Det er et system bestående av en kk-modul og en lærer-modul. Disse kommuniserer med hverandre over blåtann.
 
 === KK-modul
-Dette er masteren. Den har en Real Time Clock, som er programmert med en alarm som sender et signal ved skolestart. Mikrokontrolleren har ekstern interrupt på dette signalet og vekkes ved dette signalet. Da går den over i å lese av klokken konstant. Når timen starter sender den lengden på timen over blåtann til lærer-modulen. Når pausen starter, sender den lengden på pausen til lærer-modulen. Når skoledagen er over, sender den stop-kommando til lærer-modulen. All konfiurering av skolestart, pauser og skoleslutt konfigureres altså på KK-modulen.
+Dette er masteren. Den har en Real Time Clock, som er programmert med en alarm som sender et signal ved skolestart. Mikrokontrolleren har ekstern interrupt på dette signalet og vekkes ved dette signalet. Da går den over i å lese av med et intervall på 1 sekund ved hjelp av Compare Match på Timer1 på ATmega32. Når timen starter sender den lengden på timen over blåtann til lærer-modulen. Når pausen starter, sender den lengden på pausen til lærer-modulen. Når skoledagen er over, sender den stop-kommando til lærer-modulen. All konfiurering av skolestart, pauser og skoleslutt konfigureres altså på KK-modulen.
 KK-modulen har også en LCD som viser gjenværende minutter og sekunder av pausen når det er pause, og gjenværende tid av timen når det er time.
 
 === Lærer-modul
@@ -78,7 +78,8 @@ Dette er slaven. Denne har RX-interrupt fra blåtannmodulen. Den sover fram til 
 \
 
 = Metode
-Kobling ble gjort for de ulike komponentene for å kunne opprette funksjonaliteten beskrevet innledningsvis. Deretter ble en og en komponent testet og det ble laget kode for rett funksjonalitet for denne komponenten. Deretter ble disse kodeutsnittene satt sammen i en sammensatt kode for funksjonaliteten på kk-modulen og en sammensatt kode for lærer-modulen. 
+Kobling ble gjort for de ulike komponentene for å kunne opprette funksjonaliteten beskrevet innledningsvis. Deretter ble en og en komponent testet og det ble laget kode for rett funksjonalitet for denne komponenten. Deretter ble disse kodeutsnittene satt sammen i en sammensatt kode for funksjonaliteten på kk-modulen og en sammensatt kode for lærer-modulen.  
+Mye inspirasjon, og informasjon om hvordan flere av komponentene som ble brukt i prosjektet fungerer, ble hentet fra Leksjonene i ING1507 @Leksjoner_datamaskinarkitektur, samt databladene til de ulike komponentene. 
 
 == Utstyr
 === KK-modul
@@ -106,7 +107,8 @@ Normal konfigurasjon av USART på ATmega32 med standard klokkehastighet på 1MHz
     image("ATmega32 baudrate.png", width: 70%),
     caption: [
         Avvik i baudrate på ATmega32 (ref. ATmega32 datablad @ATmega32_datasheet)
-    ]
+    ],
+    supplement: [Figur]
 ) <ATmega32_baudrate>
 
 == HM-10 Blåtannmodul
@@ -118,14 +120,16 @@ DS3231 er en ekstremt nøyaktig klokke som fungerer over I2C. Denne har et minne
     image("DS3231 registers.png", width: 70%),
     caption: [
         Tidsregistere i DS3231 (ref. DS3231 datablad @DS3231_datasheet)
-    ]
+    ],
+    supplement: [Figur]
 ) <DS3231_registers>
 
 #figure(
     image("DS3231 read.png", width: 70%),
     caption: [
         Prosess for avlesning DS3231
-    ]
+    ],
+    supplement: [Figur]
 ) <DS3231_read>
 \
 #figure(
@@ -148,7 +152,8 @@ DS3231 er en ekstremt nøyaktig klokke som fungerer over I2C. Denne har et minne
     ),
     caption: [
             Kode for avlesning DS3231
-        ]
+        ],
+    supplement: [Oppføring]
 )<DS3231_read_code>
 
 == 7-segment-skjerm
@@ -157,26 +162,29 @@ En 7-segment-skjerm er satt sammen av 7 led-lys med felles anode eller katode, h
     image("7-segment-display.png", width: 70%),
     caption: [
         7-segment-skjerm
-    ]
+    ],
+    supplement: [Figur]
 ) <7-segment-display>
 \
 = Kodeprinsipper
 == KK-modul
 === Alarm på DS3231
 _Utklipp hentet fra databladet til DS3231 @DS3231_datasheet _\
-For prosjektet skal ATmega32 vekkes ved alarmen på DS3231 til kl.08.00. Alarmen settes ved å skrive til alarm-registrene (ref. @DS3231_registers). For å få alarmen til å trigge på sekunder, minutter og timer, settes A1M4 i DS3231-register til 1 (ref. @DS3231_alarm_time) For å oppnå at når alarmen trigges settes SQW-pinnen til GND, slås Interrupt Control på ved å sette INTCN til 1. For at den skal trigge på alarm 1, slås også A1IE på. (ref. @DS3231_alarm). Alarm-initieringen er implementert i @DS3231_init_alarm_code. Setting av alarm er implementert i @DS3231_set_alarm. Når flagget for alarmen blir satt, vekkes ATmega32 og går over i å lese av klokken konstant. Flagget må nullstilles manuelt, og gjøres ved å sette bit-en for A1F i @DS3231_alarm_flag til 0. Dette er implementert i @DS3231_clear_alarm_flag.
+For prosjektet skal ATmega32 vekkes ved alarmen på DS3231 til kl.08.00. Alarmen settes ved å skrive til alarm-registrene (ref. @DS3231_registers). For å få alarmen til å trigge på sekunder, minutter og timer, settes A1M4 i DS3231-register til 1 (ref. @DS3231_alarm_time) For å oppnå at SQW-pinnen på DS3231 settes til GND når alarmen trigges, slås Interrupt Control på ved å sette INTCN til 1. For at den skal trigge på alarm 1, slås også A1IE på. (ref. @DS3231_alarm). Alarm-initieringen er implementert i @DS3231_init_alarm_code. Setting av alarm er implementert i @DS3231_set_alarm. Når flagget for alarmen blir satt, vekkes ATmega32 og går over i å lese av klokken. Flagget må nullstilles manuelt, og gjøres ved å sette bit-en for A1F i @DS3231_alarm_flag til 0. Dette er implementert i @DS3231_clear_alarm_flag.
 #figure(
     image("DS3231 alarm time.png", width: 70%),
     caption: [
         Konfigurering av alarm på DS3231
-    ]
+    ],
+    supplement: [Figur]
 ) <DS3231_alarm_time>
 
 #figure(
     image("DS3231 alarm.png", width: 70%),
     caption: [
         Register for å konfigurere blant annet alarm på DS3231
-    ]
+    ],
+    supplement: [Figur]
 ) <DS3231_alarm>
 
 #figure(
@@ -194,7 +202,8 @@ For prosjektet skal ATmega32 vekkes ved alarmen på DS3231 til kl.08.00. Alarmen
     ),
     caption: [
         Kode for å initiere alarm på DS3231
-    ]
+    ],
+    supplement: [Oppføring]
 ) <DS3231_init_alarm_code>
 
 #figure(
@@ -216,14 +225,16 @@ For prosjektet skal ATmega32 vekkes ved alarmen på DS3231 til kl.08.00. Alarmen
     ),
     caption: [
         Kode for å sette alarm1
-    ]
+    ],
+    supplement: [Oppføring]
 ) <DS3231_set_alarm>
 
 #figure(
     image("DS3231 alarm flag.png", width: 70%),
     caption: [
         Register for å lese av / nullstille flagg
-    ]
+    ],
+    supplement: [Figur]
 ) <DS3231_alarm_flag>
 
 #figure(
@@ -243,7 +254,8 @@ For prosjektet skal ATmega32 vekkes ved alarmen på DS3231 til kl.08.00. Alarmen
     ),
     caption: [
         Kode for å nullstille alarm-flagget
-    ]
+    ],
+    supplement: [Oppføring]
 ) <DS3231_clear_alarm_flag>
 
 
@@ -251,12 +263,36 @@ For prosjektet skal ATmega32 vekkes ved alarmen på DS3231 til kl.08.00. Alarmen
 == Blåtannmodul
 Konfigurering av modulen var utfordrende, da det er vanskelig å vite nøyaktig hvordan modulen opererer, særlig med lite dokumentasjon. Slike blåtannmoduler er også moduler det er finnes utallige kopier av der ulike produsenter har ulike standarder. Dette gjør det spesielt vanskelig å finne hvilken type modul med hvilken konfigurasjon man har, og deretter å finne adekvat dokumentasjon for denne. (Utseende på en HC-06, HC-05 og HM-10-modul er tilnærmet identisk, noe som gjør det vanskelig å identifisere hvilken man har). I vårt tilfelle fant vi med mye leting ut at våres modul var av typen HM-10, de var imidlertid ikke helt etter standard, for flere av AT-kommandoene som var å finne i ufullstendig dokumentasjon på internett returnerte våres blåtann moduler med “Error”. Tross dette var vi i stand til å endre rolle mellom slave og master. I vårt prosjekt ble blåtannmodulen brukt ved KK-modulen satt til å være master, og lærer-modulen slave. Etter det vi kunne finne av dokumentasjon på internett om automatisk oppkobling i slave-master-par fungerte ingen av kommandoene for å sette opp at master-modulen automatisk skulle koble seg opp til slave-modulen ved oppstart. Vi måtte derfor konkludere med at med mangel på rett dokumentasjon for våre blåtannmoduler var ikke automatisk sammenkobling ved oppstart mulig. Dette resulterte i at man ved oppstart må koble master modulen til seriell tilbobling til PC, for å via AT-kommandoer søke etter nære blåtann-moduler og velge rett, for så å koble opp til denne.
 == Virkemåte KK-modul
-Det er hensiktsmessig at masteren har mest mulig nøyaktig tid, da Lærer-modulen settes etter denne. Det kunne blitt brukt interne timere i KK-modulen, og lest av klokken DS3231 med relativt lange intervallpauser, noe som kunne spart energi. Det ble alikevel besluttet at ettersom KK-modulen ikke kjøres fra et batteri, ville det være mer hensiktsmessig å heller lese av klokken kontinuelig, for å få mest mulig korrekt tid. Noen optimaliseringer ble imidlertid implementert: 1. Alarmen på DS3231 settes til kl.08.00. Slik at når tidspunktet er 08.00 settes SQW-pinnen på DS3231 til GND. KK-modulen har dette signalet som et interrupt-signal, slik at den er i sleep fram til starten av dagen. Deretter leser den kontinuelig av klokken over I2C. Dette gjør den med bruk av while mens den sender og venter på ACK, grunnen til dette er at vi er nødt til å ha kontroll på hvor vi er i kommunikasjonsprosessen, da vi først sender adressen vi leser fra, for så å lese av et bestemt antall verdier, der vi får neste verdi ved å sende ACK og må ha kontroll på når vi skal sende NACK og STOP når all klokkedata er mottatt. Ved pause-/timestart senders lengden på pausen eller timen over USART. Denne USART-kommunikasjonen gjøres gjennom interrupts for å ikke blokkere hovedprogrammet. Dette gjør at KK-modulen kan fortsette å lese av klokken mens den sender data over USART. Dette gjør at KK-modulen har mest mulig korrekt tid, og kan sende data til Lærer-modulen på riktig tidspunkt.
+Det er hensiktsmessig at masteren har mest mulig nøyaktig tid, da Lærer-modulen settes etter denne. Derfor ble det brukt intern timer med Compare Match for å lese av klokken med 1 sekunds intervall. Dette gjør at KK-modulen har mest mulig nøyaktig tid, ettersom DS3231-klokken heller ikke har mer nøyaktighet enn 1-sekunds intervall, og mer enn dette er jo heller strengt tatt ikke nødvendig for våres formål. Noen ytteligere optimaliseringer ble også implementert for å kunne spare energi: 1. Alarmen på DS3231 settes til kl.08.00. Slik at når tidspunktet er 08.00 settes SQW-pinnen på DS3231 til GND. KK-modulen har dette signalet som et interrupt-signal, slik at den er i sleep fram til starten av dagen. Deretter leser den av klokken over I2C ved hvert tidsintervall. I2C-kommunikasjonen gjør den med bruk av while mens den sender og venter på ACK, grunnen til dette er at vi er nødt til å ha kontroll på hvor vi er i kommunikasjonsprosessen, da vi først sender adressen vi leser fra, for så å lese av et bestemt antall verdier, der vi får neste verdi ved å sende ACK og må ha kontroll på når vi skal sende NACK og STOP når all klokkedata er mottatt. Ved pause-/timestart senders lengden på pausen eller timen over USART.
 
 = Feilkilder
 USART på ATmega32 ble konfigurert til å bruke dobbel hastighet. Dette gjorde at baud-prescaler fikk en verdi som ga den 0.2% avvik ved baud-rate på 9600. Selv om avviket er lite, er det ikke neglisjerbart. Dette kombinert med eventuelle feil under overføring med blåtann, gjør at det er en viss mulighet for at data som sendes fra KK-modulen blir mottatt feil på Lærer-modulen, og at denne derfor vil vise feil gjenværende tid.
+
+= Konklusjon
+Prosjektet har vært lærerikt, og vi har fått en god forståelse for hvordan de ulike komponentene vi har brukt fungerer. Vi har også fått en god forståelse for hvordan grunnprinsippene i USART, PWM, I2C og interrupt fungerer og hvordan dette kan brukes i praksis. Vi har også fått en god forståelse for hvordan man lager mer sammensatte systemer, og hvilke utfordringer som kommer med dette, noe som har gitt en dypere forståelse for grunnprinsippene ved at problemene har måttet løses i praksis. Bruk av nye komponenter som DS3231 har også gitt mer innsikt i hvordan datablad kan brukes til å forstå hvordan en komponent fungerer, og hvordan kode må skrives for å kunne bruke denne komponenten. 
 
 #bibliography(
     "referanser.yml",
     title: "Referanser",
 )
+
+
+#pagebreak()
+#set page(numbering: "i")
+#counter(page).update(1)
+
+
+
+
+= Vedlegg
+== KK_modul
+=== KK_module.c
+#kode("Main_project/main.c")
+=== I2C.h
+#kode("Main_project/I2C.h")
+=== RTC.h
+#kode("Main_project/RTC.h")
+=== USART.h
+#kode("Main_project/USART.h")
+=== screen.h
+#kode("Main_project/screen.h")

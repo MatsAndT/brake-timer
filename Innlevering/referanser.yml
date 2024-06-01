@@ -9,3 +9,9 @@ ATmega32_datasheet:
     title: ATmega32/L Datasheet
     author: Atmel Corporation
     url: https://ww1.microchip.com/downloads/en/DeviceDoc/doc2503.pdf
+
+Leksjoner_datamaskinarkitektur:
+    type: Article
+    title: Leksjoner i datamaskinarkitektur
+    author: Marshed Kassim Mohammed
+    date: 2024
