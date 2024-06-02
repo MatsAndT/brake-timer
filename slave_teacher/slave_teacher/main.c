@@ -18,6 +18,7 @@ long USART_BAUDRATE = 9600;
 
 volatile uint16_t seconds_left = 0;
 volatile bool is_brake = false;
+volatile bool day_over = false;
 
 void seconds_timer()
 {
@@ -92,6 +93,12 @@ void handleMessage(unsigned char str[])
 		is_brake = false;
 		moveServo(ServoDown);
 	}
+	else if (str[0] == 's')
+	{
+		is_brake = false;
+		day_over = true;
+		return 0;
+	}
 	
 	char time_left_char[MAX_LENGTH];
 	// Removing the 1st index (which is either b or l)
@@ -102,8 +109,7 @@ void handleMessage(unsigned char str[])
 	time_left_char[strlen(str) - 1] = '\0';
 
 	// Convert the remaining string to integer
-	seconds_left = atoi(time_left_char);
-	seconds_left = seconds_left * 60;
+	seconds_left = atoi(time_left_char) * 60;
 }
 
 ISR(USART_RXC_vect) {
