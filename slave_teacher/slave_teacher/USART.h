@@ -1,3 +1,12 @@
+/*
+ * USART.h
+ *
+ * Created: 16.05.2024 08:31:55
+ *  Author: R
+ */ 
+
+#ifndef USART_H_
+#define USART_H_
 
 void USART_Init(long USART_BAUDRATE)
 {
@@ -34,3 +43,5 @@ void USART_Transmit_String(char str[]){
 		i++;
 	} while (str[i] != '\0');
 }
+
+#endif /* USART_H_ */

@@ -2,7 +2,7 @@
  * servo.h
  *
  * Created: 21.05.2024 16:29:34
- *  Author: Mats
+ *  Author: M
  */ 
 
 

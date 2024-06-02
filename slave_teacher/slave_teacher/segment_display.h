@@ -1,8 +1,8 @@
 /*
- * SMA420564.h
+ * segment_display.h
  *
  * Created: 16.05.2024 08:31:55
- *  Author: Mats
+ *  Author: M
  */ 
 
 #pragma once
