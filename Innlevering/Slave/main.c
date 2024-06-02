@@ -120,6 +120,7 @@ void handleMessage(unsigned char str[])
 		day_over = true;
 		moveServo(ServoDown);
 		stop_timers();
+		seconds_left = 0;
 		return 0;
 	}
 	
