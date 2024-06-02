@@ -1,4 +1,4 @@
-/* This code is modified from https://www.electronicwings.com/avr-atmega/real-time-clock-rtc-ds1307-interfacing-with-atmega16-32 */
+/* This code is inspired from https://www.electronicwings.com/avr-atmega/real-time-clock-rtc-ds1307-interfacing-with-atmega16-32 */
 
 uint8_t second, minute, hour, weekday, date, month, year;
 
