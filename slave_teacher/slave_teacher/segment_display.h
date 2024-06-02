@@ -43,7 +43,7 @@ void seg_init()
 
 	OCR0 = 39; // Set CTC compare value to 39 for 50Hz at 1MHz AVR clock, with a prescaler of 256, 313 ved 64
 
-	TCCR0 |= (1 << CS12); // Start timer 1 ved Fcpu/256
+	TCCR0 |= (1 << CS02); // Start timer 0 ved Fcpu/256
 }
 
 #define display_delay 1

@@ -20,7 +20,7 @@ volatile uint16_t seconds_left = 0;
 volatile bool is_brake = false;
 volatile bool day_over = false;
 
-void seconds_timer()
+void init_seconds_timer()
 {
 	// Clock https://stackoverflow.com/a/34210840/7419883
 	TCCR2 |= (1 << WGM21); // Configure timer 1 for CTC mode
@@ -34,6 +34,27 @@ void seconds_timer()
 	TCCR2 |= ((1 << CS20) | (1 << CS21) | (1 << CS22)); // Start timer at Fcpu/1024
 }
 
+// Stops all timers to save energy
+void stop_timers()
+{
+	// Timer/Counter0 - Stop the timer
+	TCCR0 &= ~((1 << CS02) | (1 << CS01) | (1 << CS00)); // Clear prescaler bits
+
+	// Timer/Counter1 - Stop the timer
+	TCCR1B &= ~((1 << CS12) | (1 << CS11) | (1 << CS10)); // Clear prescaler bits
+
+	// Timer/Counter2 - Stop the timer
+	TCCR2 &= ~((1 << CS22) | (1 << CS21) | (1 << CS20)); // Clear prescaler bits
+}
+
+// Starts all timers again
+void start_timers()
+{
+	TCCR0 |= (1 << CS02); // Start timer 0 ved Fcpu/256
+	TCCR1B |= (1 << CS10); // Start timer 1, prescaler
+	TCCR2 |= ((1 << CS20) | (1 << CS21) | (1 << CS22)); // Start timer 2 at Fcpu/1024
+}
+
 int main() {
 	// Turn of JTAG - https://www.avrfreaks.net/s/topic/a5C3l000000UK2iEAG/t090838?comment=P-571371
 	MCUCSR = (1 << JTD); //-U hfuse:w:0xD9:m
@@ -43,9 +64,9 @@ int main() {
 	DDRB |= (1 << 0); // Set LED as output DEBUG
 	
 	seg_init();
-	seconds_left = 350;
+	seconds_left = 60 * 45;
 	
-	seconds_timer();
+	init_seconds_timer();
 	
 	servo_init();
 	moveServo(ServoDown);
@@ -97,7 +118,15 @@ void handleMessage(unsigned char str[])
 	{
 		is_brake = false;
 		day_over = true;
+		moveServo(ServoDown);
+		stop_timers();
 		return 0;
+	}
+	
+	if (day_over)
+	{
+		start_timers();
+		day_over = false;
 	}
 	
 	char time_left_char[MAX_LENGTH];
