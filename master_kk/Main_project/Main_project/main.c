@@ -68,13 +68,10 @@ int main(void)
     
 }
 
-#define NUMBER_OF_BREAKS 5
+#define NUMBER_OF_BREAKS 9
 int break_times[NUMBER_OF_BREAKS][3] = {
 	{8, 0, 0},				// Start of day, (have break length of 0)
-	{8, 1, 1},				// Break {starthour, startminute, length}
-	{8, 3, 2},
-	{8, 40, 5},
-	{9, 25, 5},
+	{9, 25, 5},				// Break {starthour, startminute, length}
 	{10, 15, 10},
 	{11, 0, 45},
 	{12, 25, 5},
@@ -118,6 +115,7 @@ ISR(TIMER1_COMPA_vect){
 			if ((minutes_since_midnight == break_times[i][0]*60 + break_times[i][1]) && break_times[i][2] != 0){ // If the time now is equal to the time the break starts. And it is not the start of the day (break length = 0)
 				if (break_times[i][2] == -1){		// End of day has duration = -1
 					/* End of day, go back to sleep */
+					USART_Transmit_String("s"); // Send stop command to Teacher module
 					TIMSK &= ~(1 << OCIE1A); // Disable Output Compare A Match Interrupt
 					read_continious_clock = 0;
 					break;

@@ -15,3 +15,9 @@ Leksjoner_datamaskinarkitektur:
     title: Leksjoner i datamaskinarkitektur
     author: Marshed Kassim Mohammed
     date: 2024
+
+
+Segment_display:
+    type: Web
+    title: 7-segment display
+    url: https://softwareparticles.com/learn-how-a-4-digit-7-segment-led-display-works-and-how-to-control-it-using-an-arduino/
